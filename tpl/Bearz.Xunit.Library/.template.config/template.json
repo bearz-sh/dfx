@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Bearz.Dev",
+    "classifications": [
+        "Bearz",
+        "Test",
+        "Xunit"
+    ],
+    "description": "Generates a C# xunit test project that uses Bearz.Xunit.Core",
+    "identity": "Bearz.Xunit.Library",
+    "name": "Bearz Xunit Test Project",
+    "shortName": "bearz-xunit",
+    "sourceName": "Bearz.Xunit.Library",
+    "tags": {
+        "language": "C#",
+        "type": "project"
+    }
+}

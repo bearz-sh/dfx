@@ -1,0 +1,7 @@
+{
+    "dotnet.defaultSolution": "dfx.sln",
+    "deno.enable": true,
+    "deno.lint": true,
+    "deno.unstable": true,
+    "deno.enablePaths": ["./.quasar"]
+}
