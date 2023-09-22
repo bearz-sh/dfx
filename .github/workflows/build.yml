@@ -1,0 +1,33 @@
+on: [push]
+       
+
+jobs:
+  build: 
+    runs-on: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: "🟣 Setup Deno"
+        uses: denolib/setup-deno@v2
+        with:
+          deno-version: v1.x
+
+      - name: "🟣 Install Qtr"
+        run: |
+          deno install --unstable -qAn qtr "https://deno.land/x/qtr@0.0.5/cli.ts"
+
+      - name: 🟣 Setup .NET Core # Required to execute ReportGenerator
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.x
+          dotnet-quality: 'ga'
+
+      - name: 🧳 Checkout
+        uses: actions/checkout@v2
+
+      - name: 🔃 Restore 
+        run: qtr restore
+
+      - name: 🏭 Build
+        run: qtr build
+
+      - name: 🧪 Test
+        run: qtr test
