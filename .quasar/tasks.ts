@@ -14,7 +14,7 @@ task("clean", () => {
 });
 
 task("restore", () => {
-    return ps.exec("dotnet", ["restore", sln, "-c", dconfig]);
+    return ps.exec("dotnet", ["restore", sln]);
 });
 
 task("build", () => {
