@@ -102,7 +102,11 @@
     <PackageReference Include="Roslynator.Analyzers"   PrivateAssets="all"/>
     <!-- <PackageReference Include="Nullable"  PrivateAssets="all" /> -->
 
-    <PackageReference Include="Nerdbank.GitVersioning"
+    <!--     
+      disabling for now due to shallow clone issues
+      <PackageReference Include="Nerdbank.GitVersioning"
                   PrivateAssets="all" />
+                  -->
+
   </ItemGroup>
 </Project>
