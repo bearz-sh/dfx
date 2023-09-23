@@ -1,3 +1,4 @@
+<!--suppress MsbuildTargetFrameworkTagInspection -->
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -6,11 +7,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <RootNamespace>Bearz.Core</RootNamespace>
+    <DefineConstants>$(DefineConstants);DFX_CORE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags></PackageTags>
+    <PackageTags>Bearz Core</PackageTags>
     <Description>
     Bearz.Core
     </Description>
