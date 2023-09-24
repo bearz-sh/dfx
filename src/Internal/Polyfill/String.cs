@@ -2,7 +2,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
+#if DFX_CORE
 namespace Bearz.Extra.Strings;
+#else
+namespace System;
+#endif
 
 #if DFX_CORE
 public

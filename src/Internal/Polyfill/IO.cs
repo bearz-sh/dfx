@@ -6,6 +6,34 @@ namespace System.IO;
 #pragma warning disable SA1649
 internal static class IOExtensions
 {
+    public static void Write(this Stream stream, Span<byte> buffer)
+    {
+        var set = ArrayPool<byte>.Shared.Rent(buffer.Length);
+        stream.Write(set, 0, buffer.Length);
+        ArrayPool<byte>.Shared.Return(set, true);
+    }
+
+    public static void Write(this Stream stream, ReadOnlySpan<byte> buffer)
+    {
+        var set = ArrayPool<byte>.Shared.Rent(buffer.Length);
+        stream.Write(set, 0, buffer.Length);
+        Array.Clear(set, 0, set.Length);
+    }
+
+    public static void Write(this BinaryWriter writer, Span<byte> buffer)
+    {
+        var set = ArrayPool<byte>.Shared.Rent(buffer.Length);
+        writer.Write(set, 0, buffer.Length);
+        ArrayPool<byte>.Shared.Return(set, true);
+    }
+
+    public static void Write(this BinaryWriter writer, ReadOnlySpan<byte> buffer)
+    {
+        var set = ArrayPool<byte>.Shared.Rent(buffer.Length);
+        writer.Write(set, 0, buffer.Length);
+        ArrayPool<byte>.Shared.Return(set, true);
+    }
+
     public static void Write(this TextWriter writer, ReadOnlySpan<char> chars)
     {
         var buffer = ArrayPool<char>.Shared.Rent(chars.Length);

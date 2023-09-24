@@ -37,12 +37,30 @@
 
   <ItemGroup>
     <Compile Include="$(InternalDir)/Polyfill/Range.cs" Link="Polyfill/Range.cs" />
-    <Compile Include="$(InternalDir)/Polyfill/StringEx.cs" Link="Polyfill/StringEx.cs" />
-    <Compile Include="$(InternalDir)/Polyfill/SearchSpan.cs" Link="Polyfill/SearchSpan.cs" />
-    <Compile Include="$(InternalDir)/Polyfill/StringEx.Search.cs" Link="Polyfill/StringEx.Search.cs" />
     <Compile Include="$(InternalDir)/Polyfill/Trimming.cs" Link="Polyfill/Trimming.cs" />
     <Compile Include="$(InternalDir)/Polyfill/PlatformAttributes.cs" Link="Polyfill/PlatformAttributes.cs" />
     <Compile Include="$(InternalDir)/Polyfill/Nullable.cs" Link="Polyfill/Nullable.cs" />
+    <Compile Include="$(InternalDir)/Polyfill/IO.cs" Link="Polyfill/IO.cs" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Include="$(InternalDir)/Extra/Arrays.Clear.cs" Link="Extra/Arrays/Arrays.Clear.cs" />
+    <Compile Include="$(InternalDir)/Extra/Arrays.Contains.cs" Link="Extra/Arrays/Arrays.Contains.cs" />
+    <Compile Include="$(InternalDir)/Extra/Arrays.Equals.cs" Link="Extra/Arrays/Arrays.Equals.cs" />
+    <Compile Include="$(InternalDir)/Extra/Arrays.ForEach.cs" Link="Extra/Arrays/Arrays.ForEach.cs" />
+    <Compile Include="$(InternalDir)/Extra/Arrays.Slice.cs" Link="Extra/Arrays/Arrays.Slice.cs" />
+    <Compile Include="$(InternalDir)/Extra/Arrays.Swap.cs" Link="Extra/Arrays/Arrays.Swap.cs" />
+    <Compile Include="$(InternalDir)/Extra/Exceptions.IsInputIOException.cs" Link="Extra/IO/Exceptions.IsInputIOException.cs" />
+    <Compile Include="$(InternalDir)/Extra/StreamReader.PipeTo.cs" Link="Extra/IO/StreamReader.PipeTo.cs" />
+    <Compile Include="$(InternalDir)/Extra/TextReader.PipeTo.cs" Link="Extra/IO/TextReader.PipeTo.cs" />
+    <Compile Include="$(InternalDir)/Extra/TextWriter.Write.cs" Link="Extra/IO/TextWriter.Write.cs" />
+    <Compile Include="$(InternalDir)/Extra/Object.DeepCopy.cs" Link="Extra/Object/Object.DeepCopy.cs" />
+    <Compile Include="$(InternalDir)/Extra/Object.ToSafeString.cs" Link="Extra/Object/Object.ToSafeString.cs" />
+    <Compile Include="$(InternalDir)/Extra/Type.IsPrimitive.cs" Link="Extra/Reflection/Type.IsPrimitive.cs" />
+    <Compile Include="$(InternalDir)/Extra/SearchSpan.cs" Link="Extra/Strings/SearchSpan.cs" />
+    <Compile Include="$(InternalDir)/Extra/String.Search.cs" Link="Extra/Strings/String.Search.cs" />
+    <Compile Include="$(InternalDir)/Polyfill/String.cs" Link="Extra/Strings/String.cs" />
+    <Compile Include="$(InternalDir)/Text/StringBuilderCache.cs" Link="Text/StringBuilderCache.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,6 +74,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Extra\IO\" />
     <Folder Include="Extra\Object\" />
+    <Folder Include="Extra\Reflection\" />
   </ItemGroup>
 </Project>
