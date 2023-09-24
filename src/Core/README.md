@@ -1,28 +1,13 @@
 # Bearz.Core
-<a name="top"></a>
 
-## Description
+Extending Base Class Library ("BCL") types and functionality.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+## Extra
 
-## Features 
+The extra namespace contains extensions for the BCL types such as string, object,
+arrays, reflection, etc. 
 
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-## Installation
-
-```powershell
-dotnet add package Bearz.Core
-```
-
-```powershell 
-<PackageReference Include="Bearz.Core" Version="*" />
-```
-
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## License 
 
-{{ license }}
-
-<p align="right">(<a href="#top">back to top</a>)</p>
+MIT

@@ -55,7 +55,7 @@
     <Windows>false</Windows>
     <Linux>false</Linux>
     <MacOs>false</MacOs>
-    <InternalDir>$(MSBuildThisFileDirectory)/Internal/src</InternalDir>
+    <InternalDir>$(MSBuildThisFileDirectory)/src/Internal</InternalDir>
     <NetLegacy>false</NetLegacy>
     <NetFramework>false</NetFramework>
   </PropertyGroup>
