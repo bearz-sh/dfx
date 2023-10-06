@@ -1,28 +1,12 @@
 # Bearz.Internal
-<a name="top"></a>
 
-## Description
+This assembly should not be compiled and referenced directly other than
+for the purpose of testing. It is meant to be used through links.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-## Features 
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-## Installation
-
-```powershell
-dotnet add package Bearz.Internal
+```xml
+<ItemGroup>
+    <Compile Include="$(InternalDir)/Polyfill/Range.cs" Link="Polyfill/Range.cs" />
+</ItemGroup>
 ```
 
-```powershell 
-<PackageReference Include="Bearz.Internal" Version="*" />
-```
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-## License 
-
-{{ license }}
-
-<p align="right">(<a href="#top">back to top</a>)</p>
+MIT
