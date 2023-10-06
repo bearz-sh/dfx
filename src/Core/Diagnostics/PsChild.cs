@@ -62,6 +62,8 @@ public sealed class PsChild : IDisposable
             }
         }
 
+        this.disposables.AddRange(startInfo.Disposables);
+
 #if NET5_0_OR_GREATER
         foreach (var arg in startInfo.Args)
         {
@@ -418,101 +420,77 @@ public sealed class PsChild : IDisposable
         return this;
     }
 
-    public Result<int, Error> Wait()
+    public int Wait()
     {
-        try
+        if (this.process.HasExited)
         {
-            if (this.process.HasExited)
-            {
-                this.exitTime = this.process.ExitTime;
-                return Result.Ok(this.process.ExitCode);
-            }
-
-            this.process.WaitForExit();
             this.exitTime = this.process.ExitTime;
             return Result.Ok(this.process.ExitCode);
         }
-        catch (Exception ex)
-        {
-            return Result.Err<int>(ex);
-        }
+
+        this.process.WaitForExit();
+        this.exitTime = this.process.ExitTime;
+        return this.process.ExitCode;
     }
 
-    public Result<PsOutput, Error> WaitForOutput()
+    public PsOutput WaitForOutput()
     {
-        try
+        if (this.process.HasExited)
         {
-            if (this.process.HasExited)
-            {
-                this.exitTime = this.process.ExitTime;
-                return Result.Ok(
-                    new PsOutput(
-                        this.process.StartInfo.FileName,
-                        this.process.ExitCode,
-                        null,
-                        null,
-                        this.StartTime,
-                        this.exitTime));
-            }
-
-            this.process.WaitForExit();
             this.exitTime = this.process.ExitTime;
-            var output = new PsOutput(this.process.StartInfo.FileName, this.process.ExitCode, null, null, this.StartTime, this.exitTime);
-            return Result.Ok(output);
+            return new PsOutput(
+                this.process.StartInfo.FileName,
+                this.process.ExitCode,
+                null,
+                null,
+                this.StartTime,
+                this.exitTime);
         }
-        catch (Exception ex)
-        {
-            return Result.Err<PsOutput>(ex);
-        }
+
+        this.process.WaitForExit();
+        this.exitTime = this.process.ExitTime;
+        var output = new PsOutput(this.process.StartInfo.FileName, this.process.ExitCode, null, null, this.StartTime, this.exitTime);
+        return output;
     }
 
-    public async Task<Result<int, Error>> WaitAsync(CancellationToken cancellationToken)
+    public async Task<int> WaitAsync(CancellationToken cancellationToken)
     {
-        try
+        if (this.process.HasExited)
         {
-            if (this.process.HasExited)
-            {
-                this.exitTime = this.process.ExitTime;
-                return Result.Ok(this.process.ExitCode);
-            }
-
-            await this.process.WaitForExitAsync(cancellationToken)
-                .ConfigureAwait(false);
+            this.exitTime = this.process.ExitTime;
             return this.process.ExitCode;
         }
-        catch (Exception ex)
-        {
-            return Result.Err<int>(ex);
-        }
+
+        await this.process.WaitForExitAsync(cancellationToken)
+            .ConfigureAwait(false);
+        return this.process.ExitCode;
     }
 
-    public async Task<Result<PsOutput, Error>> WaitForOutputAsync(CancellationToken cancellationToken)
+    public async Task<PsOutput> WaitForOutputAsync(CancellationToken cancellationToken)
     {
-        try
+        if (this.process.HasExited)
         {
-            if (this.process.HasExited)
-            {
-                this.exitTime = this.process.ExitTime;
-                return Result.Ok(
-                    new PsOutput(
-                        this.process.StartInfo.FileName,
-                        this.process.ExitCode,
-                        null,
-                        null,
-                        this.StartTime,
-                        this.exitTime));
-            }
-
-            await this.process.WaitForExitAsync(cancellationToken)
-                .ConfigureAwait(false);
-
             this.exitTime = this.process.ExitTime;
-            return new PsOutput(this.process.StartInfo.FileName, this.process.ExitCode, null, null, this.StartTime, this.exitTime);
+            return new PsOutput(
+                this.process.StartInfo.FileName,
+                this.process.ExitCode,
+                null,
+                null,
+                this.StartTime,
+                this.exitTime);
         }
-        catch (Exception ex)
-        {
-            return Error.Convert(ex);
-        }
+
+        await this.process.WaitForExitAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        this.exitTime = this.process.ExitTime;
+        return new PsOutput(
+            this.process.StartInfo.FileName,
+            this.process.ExitCode,
+            null,
+            null,
+            this.StartTime,
+            this.exitTime);
     }
 
     public void Kill()

@@ -2,38 +2,61 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Bearz;
 
-public struct Option<TValue> : IEquatable<Option<TValue>>
+public enum OptionState
+{
+    None = 0,
+    Some = 1,
+}
+
+public static class Option
+{
+    private static readonly Option<ValueTuple> s_none = new();
+
+    public static Option<ValueTuple> None()
+        => s_none;
+
+    public static Option<T> None<T>()
+        => new(OptionState.None);
+
+    public static Option<TValue> Some<TValue>(TValue value)
+        => new(value);
+}
+
+public sealed class Option<TValue> : IEquatable<Option<TValue>>, IEquatable<TValue>
 {
     private readonly TValue? value;
 
-    private readonly bool isNone;
+    private readonly OptionState state = OptionState.Some;
 
     public Option()
-        : this(false)
+        : this(OptionState.Some)
     {
     }
 
-    internal Option(bool isNone)
+    internal Option(OptionState state)
     {
-        if (isNone)
+        this.value = default;
+        if (state == OptionState.None)
         {
-            this.isNone = true;
+            this.state = OptionState.None;
             return;
         }
 
         this.value = default;
-        this.isNone = this.value is null or ValueTuple or DBNull;
+        if (this.value is null or ValueTuple or DBNull)
+            this.state = OptionState.None;
     }
 
     internal Option(TValue value)
     {
         this.value = value;
-        this.isNone = value is null or ValueTuple or DBNull;
+        if (this.value is null or ValueTuple or DBNull)
+            this.state = OptionState.None;
     }
 
-    public bool IsSome => this.value is not null;
+    public bool IsSome => this.state == OptionState.Some;
 
-    public bool IsNone => this.value is null;
+    public bool IsNone => this.state == OptionState.None;
 
     public static implicit operator Option<TValue>(TValue value)
         => new Option<TValue>(value);
@@ -50,10 +73,15 @@ public struct Option<TValue> : IEquatable<Option<TValue>>
 
     public static Option<TValue> None()
     {
-        return new Option<TValue>(true);
+        return new Option<TValue>(OptionState.None);
     }
 
-    public bool Equals(TValue other)
+    public void Deconstruct(out TValue? value)
+    {
+        value = this.value!;
+    }
+
+    public bool Equals(TValue? other)
     {
         if (ReferenceEquals(this.value, other))
             return true;
@@ -61,15 +89,17 @@ public struct Option<TValue> : IEquatable<Option<TValue>>
         return object.Equals(this.value, other);
     }
 
-    public bool Equals(Option<TValue> other)
+    public bool Equals(Option<TValue>? other)
     {
-        if (this.value is null)
-            return other.isNone;
+        if (ReferenceEquals(this, other))
+            return true;
 
-        if (this.isNone)
-            return other.isNone;
+        if (other is null)
+            return false;
 
-        return this.value!.Equals(other.value);
+        return this.state == other.state &&
+               (this.IsNone ||
+               (this.IsSome && this.value!.Equals(other.value)));
     }
 
     // override object.Equals
@@ -78,10 +108,8 @@ public struct Option<TValue> : IEquatable<Option<TValue>>
         if (obj is Option<TValue> other)
             return this.Equals(other);
 
-        if (this.isNone)
-        {
-            return obj is Option<ValueTuple> or ValueTuple or DBNull;
-        }
+        if (obj is TValue value)
+            return this.Equals(value);
 
         return false;
     }
@@ -89,37 +117,31 @@ public struct Option<TValue> : IEquatable<Option<TValue>>
     // override object.GetHashCode
     public override int GetHashCode()
     {
-        return HashCode.Combine(this.isNone, this.value);
+        return HashCode.Combine(this.state, this.value);
     }
 
     public TValue Expect(string message)
     {
-        if (this.value is null)
-        {
+        if (this.IsNone)
             throw new InvalidOperationException(message);
-        }
 
-        return this.value;
+        return this.value!;
     }
 
     public TValue Expect(string message, Exception inner)
     {
-        if (this.value is null)
-        {
+        if (this.IsNone)
             throw new InvalidOperationException(message, inner);
-        }
 
-        return this.value;
+        return this.value!;
     }
 
     public TValue Expect(string message, Func<Exception> inner)
     {
-        if (this.value is null)
-        {
+        if (this.IsNone)
             throw new InvalidOperationException(message, inner());
-        }
 
-        return this.value;
+        return this.value!;
     }
 
     public Option<TValue> Filter(Func<TValue, bool> predicate)
@@ -155,35 +177,19 @@ public struct Option<TValue> : IEquatable<Option<TValue>>
     }
 
     public Option<TValue> Or(TValue other)
-    {
-        if (this.IsNone)
-            return new Option<TValue>(other);
-
-        return this;
-    }
+        => this.IsNone ? new Option<TValue>(other) : this;
 
     public Option<TValue> OrElse(Func<TValue> factory)
-    {
-        if (this.IsNone)
-            return new Option<TValue>(factory());
-
-        return this;
-    }
+        => this.IsNone ? new Option<TValue>(factory()) : this;
 
     public TValue Unwrap()
-    {
-        return this.value!;
-    }
+        => this.IsNone ? this.value! : throw new InvalidOperationException("Option is None");
 
     public TValue UnwrapOr(TValue defaultValue)
-    {
-        return this.value ?? defaultValue;
-    }
+        => this.IsNone ? defaultValue : this.value!;
 
     public TValue UnwrapOrElse(Func<TValue> defaultValue)
-    {
-        return this.value ?? defaultValue();
-    }
+        => this.IsNone ? defaultValue() : this.value!;
 
     public Option<(TValue, TOther)> Zip<TOther>(Option<TOther> other)
     {
@@ -192,18 +198,4 @@ public struct Option<TValue> : IEquatable<Option<TValue>>
 
         return new Option<(TValue, TOther)>((this.value!, other.value!));
     }
-}
-
-public static class Option
-{
-    private static readonly Option<ValueTuple> none = new Option<ValueTuple>();
-
-    public static Option<ValueTuple> None()
-      => none;
-
-    public static Option<T> None<T>()
-        => new(true);
-
-    public static Option<TValue> Some<TValue>(TValue value)
-        => new(value);
 }

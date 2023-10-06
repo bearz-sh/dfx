@@ -3,11 +3,12 @@ using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
+using Bearz.Diagnostics;
 using Bearz.Text;
 
 namespace Bearz;
 
-public class PsArgs : List<string>
+public partial class PsArgs : List<string>
 {
     public PsArgs()
     {
@@ -49,6 +50,9 @@ public class PsArgs : List<string>
 
     public static implicit operator string(PsArgs args)
         => args.ToString();
+
+    public static implicit operator PsArgs(Splattable obj)
+        => Splat(obj);
 
     public static implicit operator Collection<string>(PsArgs args)
         => new Collection<string>(args);

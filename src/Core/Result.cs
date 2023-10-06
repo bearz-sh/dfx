@@ -1,28 +1,62 @@
 namespace Bearz;
 
-public readonly struct Result<TValue, TError>
+public enum ResultState
+{
+    Ok = 0,
+    Error = 1,
+}
+
+public static class Result
+{
+    public static Result<TValue, Error> From<TValue>(Func<TValue> func)
+    {
+        try
+        {
+            var value = func();
+            return Ok(value);
+        }
+        catch (Exception exception)
+        {
+            return Err<TValue>(exception);
+        }
+    }
+
+    public static Result<TValue, TError> Ok<TValue, TError>(TValue value)
+        => new(value);
+
+    public static Result<TValue, Error> Ok<TValue>(TValue value)
+        => new(value);
+
+    public static Result<TValue, TError> Err<TValue, TError>(TError error)
+        => new(error);
+
+    public static Result<TValue, Error> Err<TValue>(Error error)
+        => new(error);
+}
+
+public sealed class Result<TValue, TError>
 {
     private readonly TValue? value;
 
     private readonly TError? error;
 
-    private readonly bool hasError;
+    private readonly ResultState state = ResultState.Ok;
 
     public Result()
     {
         this.value = default(TValue);
-        this.hasError = this.value != null;
+        this.state = ResultState.Ok;
     }
 
     internal Result(TValue value)
     {
-        this.hasError = false;
+        this.state = ResultState.Ok;
         this.value = value;
     }
 
     internal Result(TError error)
     {
-        this.hasError = true;
+        this.state = ResultState.Error;
         this.error = error;
     }
 
@@ -30,12 +64,13 @@ public readonly struct Result<TValue, TError>
     {
         this.value = value;
         this.error = error;
-        this.hasError = error is not null;
+        if (error is not null)
+            this.state = ResultState.Error;
     }
 
-    public bool IsOk => !this.hasError;
+    public bool IsOk => this.state == ResultState.Ok;
 
-    public bool IsError => this.hasError;
+    public bool IsError => this.state == ResultState.Error;
 
     public static implicit operator TValue(Result<TValue, TError> result)
     {
@@ -43,16 +78,16 @@ public readonly struct Result<TValue, TError>
     }
 
     public static implicit operator Result<TValue, TError>(TValue value)
-        => new Result<TValue, TError>(value);
+        => new(value);
 
     public static implicit operator Result<TValue, TError>(TError error)
-        => new Result<TValue, TError>(error);
+        => new(error);
 
     public static Result<TValue, TError> Ok(TValue value)
-        => new Result<TValue, TError>(value);
+        => new(value);
 
     public static Result<TValue, TError> Err(TError value)
-        => new Result<TValue, TError>(value);
+        => new(value);
 
     public Result<TValue2, TError2> And<TValue2, TError2>(Result<TValue2, TError2> other)
     {
@@ -86,7 +121,7 @@ public readonly struct Result<TValue, TError>
 
     public Option<TError> Error()
     {
-        if (this.hasError)
+        if (this.IsError)
             return Option.Some(this.error!);
 
         return Option<TError>.None();
@@ -94,7 +129,7 @@ public readonly struct Result<TValue, TError>
 
     public Option<TValue> Ok()
     {
-        if (this.hasError)
+        if (this.IsError)
             return Option<TValue>.None();
 
         return Option.Some(this.value!);
@@ -102,7 +137,7 @@ public readonly struct Result<TValue, TError>
 
     public TValue Unwrap()
     {
-        if (this.hasError)
+        if (this.IsError)
             throw new InvalidOperationException($"Unwrap is invalid when result has an error: {this.error}.");
 
         return this.value!;
@@ -110,7 +145,7 @@ public readonly struct Result<TValue, TError>
 
     public TValue UnwrapOr(TValue defaultValue)
     {
-        if (this.hasError)
+        if (this.IsError)
             return defaultValue;
 
         return this.value!;
@@ -118,7 +153,7 @@ public readonly struct Result<TValue, TError>
 
     public TValue UnwrapOrElse(Func<TValue> defaultValue)
     {
-        if (this.hasError)
+        if (this.IsError)
             return defaultValue();
 
         return this.value!;
@@ -126,7 +161,7 @@ public readonly struct Result<TValue, TError>
 
     public TError UnwrapError()
     {
-        if (!this.hasError)
+        if (!this.IsError)
             throw new InvalidOperationException($"UnwrapError is invalid when result has value: {this.value}.");
 
         return this.error!;
@@ -134,7 +169,7 @@ public readonly struct Result<TValue, TError>
 
     public void Throw()
     {
-        if (!this.hasError)
+        if (!this.IsError)
             return;
 
         if (this.error is Exception exception)
@@ -142,32 +177,4 @@ public readonly struct Result<TValue, TError>
 
         throw new InvalidOperationException(this.error!.ToString());
     }
-}
-
-public static class Result
-{
-    public static Result<TValue, Error> From<TValue>(Func<TValue> func)
-    {
-        try
-        {
-            var value = func();
-            return Ok(value);
-        }
-        catch (Exception exception)
-        {
-            return Err<TValue>(exception);
-        }
-    }
-
-    public static Result<TValue, TError> Ok<TValue, TError>(TValue value)
-        => new(value);
-
-    public static Result<TValue, Error> Ok<TValue>(TValue value)
-        => new(value);
-
-    public static Result<TValue, TError> Err<TValue, TError>(TError error)
-        => new(error);
-
-    public static Result<TValue, Error> Err<TValue>(Error error)
-        => new(error);
 }

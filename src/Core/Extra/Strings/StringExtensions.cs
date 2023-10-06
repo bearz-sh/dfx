@@ -1,6 +1,8 @@
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
+using Bearz.Text;
+
 namespace Bearz.Extra.Strings;
 
 public partial class StringExtensions
@@ -169,6 +171,90 @@ public partial class StringExtensions
             return false;
 
         return source?.Equals(right, comparison) == false;
+    }
+
+    public static string ScreamingSnakeCase(this string value)
+    {
+        var builder = StringBuilderCache.Acquire();
+        var previous = char.MinValue;
+        foreach (var c in value)
+        {
+            if (char.IsUpper(c) && builder.Length > 0 && previous != '_')
+            {
+                builder.Append('_');
+            }
+
+            if (c is '-' or ' ' or '_')
+            {
+                builder.Append('_');
+                previous = '_';
+                continue;
+            }
+
+            if (!char.IsLetterOrDigit(c))
+                continue;
+
+            builder.Append(char.ToUpperInvariant(c));
+            previous = c;
+        }
+
+        return StringBuilderCache.GetStringAndRelease(builder);
+    }
+
+    public static string Hyphenate(this string value)
+    {
+        var builder = StringBuilderCache.Acquire();
+        var previous = char.MinValue;
+        foreach (var c in value)
+        {
+            if (char.IsUpper(c) && builder.Length > 0 && previous != '-')
+            {
+                builder.Append('-');
+            }
+
+            if (c is '_' or '-' or ' ')
+            {
+                builder.Append('-');
+                previous = '-';
+                continue;
+            }
+
+            if (!char.IsLetterOrDigit(c))
+                continue;
+
+            builder.Append(char.ToLowerInvariant(c));
+            previous = c;
+        }
+
+        return StringBuilderCache.GetStringAndRelease(builder);
+    }
+
+    public static string Underscore(this string value)
+    {
+        var builder = StringBuilderCache.Acquire();
+        var previous = char.MinValue;
+        foreach (var c in value)
+        {
+            if (char.IsUpper(c) && builder.Length > 0 && previous != '_')
+            {
+                builder.Append('_');
+            }
+
+            if (c is '-' or ' ' or '_')
+            {
+                builder.Append('_');
+                previous = '_';
+                continue;
+            }
+
+            if (!char.IsLetterOrDigit(c))
+                continue;
+
+            builder.Append(char.ToLowerInvariant(c));
+            previous = c;
+        }
+
+        return StringBuilderCache.GetStringAndRelease(builder);
     }
 
     internal static bool IsHexString(this string value)

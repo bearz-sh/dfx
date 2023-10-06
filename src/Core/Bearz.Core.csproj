@@ -78,4 +78,14 @@
     <Folder Include="Extra\Object\" />
     <Folder Include="Extra\Reflection\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.FileSystemGlobbing">
+      <HintPath>..\..\..\..\.nuget\packages\microsoft.extensions.filesystemglobbing\7.0.0\lib\net6.0\Microsoft.Extensions.FileSystemGlobbing.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" />
+  </ItemGroup>
 </Project>

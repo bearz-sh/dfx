@@ -23,10 +23,10 @@ public sealed partial class Ps
         this.StartInfo = new PsStartInfo();
     }
 
-    public Ps(string fileName, PsStartInfo startInfo)
+    public Ps(string fileName, PsStartInfo? startInfo)
     {
         this.FileName = fileName;
-        this.StartInfo = startInfo;
+        this.StartInfo = startInfo ?? new PsStartInfo();
     }
 
     public static int Id => Current.Id;
@@ -71,6 +71,122 @@ public sealed partial class Ps
     public static Ps New(string fileName, PsStartInfo startInfo)
     {
         return new Ps(fileName, startInfo);
+    }
+
+    public static PsOutput Capture(PsCommand command, PsStartInfo? startInfo = null)
+    {
+        var ps = new Ps(command.GetExecutablePath(), startInfo);
+        ps.WithArgs(command);
+        ps.WithStdOut(Stdio.Piped)
+            .WithStdErr(Stdio.Piped);
+
+        return ps.Output();
+    }
+
+    public static PsOutput Capture(string fileName, PsArgs? args = null, PsStartInfo? startInfo = null)
+    {
+        var ps = new Ps(fileName, startInfo);
+        if (args != null)
+            ps.WithArgs(args);
+
+        ps.WithStdOut(Stdio.Piped)
+            .WithStdErr(Stdio.Piped);
+
+        return ps.Output();
+    }
+
+    public static Task<PsOutput> CaptureAsync(
+        PsCommand command,
+        PsStartInfo? startInfo = null,
+        CancellationToken cancellationToken = default)
+    {
+        var ps = new Ps(command.GetExecutablePath(), startInfo);
+        ps.WithArgs(command);
+        ps.WithStdOut(Stdio.Piped)
+            .WithStdErr(Stdio.Piped);
+
+        return ps.OutputAsync(cancellationToken);
+    }
+
+    public static Task<PsOutput> CaptureAsync(
+        string fileName,
+        PsArgs? args = null,
+        PsStartInfo? startInfo = null,
+        CancellationToken cancellationToken = default)
+    {
+        var ps = new Ps(fileName, startInfo);
+        if (args != null)
+            ps.WithArgs(args);
+
+        ps.WithStdOut(Stdio.Piped)
+            .WithStdErr(Stdio.Piped);
+
+        return ps.OutputAsync(cancellationToken);
+    }
+
+    public static PsChild Spawn(PsCommand command, PsStartInfo? startInfo = null)
+    {
+        var ps = new Ps(command.GetExecutablePath(), startInfo);
+        ps.WithArgs(command);
+
+        return ps.Spawn();
+    }
+
+    public static PsChild Spawn(string fileName, PsArgs? args = null, PsStartInfo? startInfo = null)
+    {
+        var ps = new Ps(fileName, startInfo);
+        if (args != null)
+            ps.WithArgs(args);
+
+        return ps.Spawn();
+    }
+
+    public static PsOutput Exec(PsCommand command, PsStartInfo? startInfo = null)
+    {
+        var ps = new Ps(command.GetExecutablePath(), startInfo);
+        ps.WithArgs(command);
+
+        return ps.Output();
+    }
+
+    public static PsOutput Exec(string fileName, PsArgs? args = null, PsStartInfo? startInfo = null)
+    {
+        var ps = new Ps(fileName, startInfo);
+        if (args != null)
+            ps.WithArgs(args);
+
+        return ps.Output();
+    }
+
+    public static Task<PsOutput> ExecAsync(
+        PsCommand command,
+        PsStartInfo? startInfo = null,
+        CancellationToken cancellationToken = default)
+    {
+        var ps = new Ps(command.GetExecutablePath(), startInfo);
+        ps.WithArgs(command);
+
+        return ps.OutputAsync(cancellationToken);
+    }
+
+    public static Task<PsOutput> ExecAsync(
+        string fileName,
+        PsArgs? args = null,
+        PsStartInfo? startInfo = null,
+        CancellationToken cancellationToken = default)
+    {
+        var ps = new Ps(fileName, startInfo);
+        if (args != null)
+            ps.WithArgs(args);
+
+        return ps.OutputAsync(cancellationToken);
+    }
+
+    public Ps WithCommand(PsCommand command)
+    {
+        this.FileName = command.GetExecutablePath();
+        this.WithArgs(command);
+        return this;
     }
 
     public Ps WithExecutable(string fileName)
@@ -247,31 +363,74 @@ public sealed partial class Ps
 
     public Result<PsOutput, Error> Output()
     {
-        var stdOut = new List<string>();
-        var stdError = new List<string>();
-        this.StartInfo.Capture(stdOut);
-        this.StartInfo.Capture(stdError);
+        List<string>? stdOut = null;
+        List<string>? stdError = null;
+
+        if (this.StartInfo.StdOut == Stdio.Piped)
+        {
+            stdOut = new List<string>();
+            this.StartInfo.Capture(stdOut);
+        }
+
+        if (this.StartInfo.StdErr == Stdio.Piped)
+        {
+            stdError = new List<string>();
+            this.StartInfo.Capture(stdError);
+        }
 
         using var child = new PsChild(this.FileName, this.StartInfo);
         var ec = child.Wait();
-        if (ec.IsError)
-            return ec.UnwrapError();
-
-        return new PsOutput(this.FileName, ec.Unwrap(), stdOut, stdError, child.StartTime, child.ExitTime);
+        return new PsOutput(this.FileName, ec, stdOut, stdError, child.StartTime, child.ExitTime);
     }
 
-    public async Task<Result<PsOutput, Error>> OutputAsync(CancellationToken cancellationToken = default)
+    public async Task<PsOutput> OutputAsync(CancellationToken cancellationToken = default)
     {
-        var stdOut = new List<string>();
-        var stdError = new List<string>();
-        this.StartInfo.Capture(stdOut);
-        this.StartInfo.Capture(stdError);
+        List<string>? stdOut = null;
+        List<string>? stdError = null;
+
+        if (this.StartInfo.StdOut == Stdio.Piped)
+        {
+            stdOut = new List<string>();
+            this.StartInfo.Capture(stdOut);
+        }
+
+        if (this.StartInfo.StdErr == Stdio.Piped)
+        {
+            stdError = new List<string>();
+            this.StartInfo.Capture(stdError);
+        }
 
         using var child = new PsChild(this.FileName, this.StartInfo);
         var ec = await child.WaitAsync(cancellationToken).ConfigureAwait(false);
-        if (ec.IsError)
-            return ec.UnwrapError();
 
-        return new PsOutput(this.FileName, ec.Unwrap(), stdOut, stdError, child.StartTime, child.ExitTime);
+        return new PsOutput(this.FileName, ec, stdOut, stdError, child.StartTime, child.ExitTime);
     }
+
+    public PsPipe Pipe(PsCommand ps, PsStartInfo? startInfo = null)
+        => new PsPipe(this).Pipe(ps, startInfo);
+
+    public PsPipe Pipe(Ps ps)
+        => new PsPipe(this).Pipe(ps);
+
+    public PsPipe Pipe(PsChild child)
+        => new PsPipe(this).Pipe(child);
+
+    public PsPipe Pipe(string fileName, PsArgs? args = null, PsStartInfo? startInfo = null)
+        => new PsPipe(this).Pipe(fileName, args, startInfo);
+
+    public Task<PsPipe> PipeAsync(PsCommand ps, PsStartInfo? startInfo = null, CancellationToken cancellationToken = default)
+        => new PsPipe(this).PipeAsync(ps, startInfo, cancellationToken);
+
+    public Task<PsPipe> PipeAsync(Ps ps, CancellationToken cancellationToken = default)
+        => new PsPipe(this).PipeAsync(ps, cancellationToken);
+
+    public Task<PsPipe> PipeAsync(PsChild child, CancellationToken cancellationToken = default)
+        => new PsPipe(this).PipeAsync(child, cancellationToken);
+
+    public Task<PsPipe> PipeAsync(
+        string fileName,
+        PsArgs? args = null,
+        PsStartInfo? startInfo = null,
+        CancellationToken cancellationToken = default)
+        => new PsPipe(this).PipeAsync(fileName, args, startInfo, cancellationToken);
 }

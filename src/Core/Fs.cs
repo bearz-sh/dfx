@@ -1,12 +1,126 @@
 using System.Runtime.CompilerServices;
 using System.Text;
 
+using Bearz.Collections.Generic;
 using Bearz.Text;
+
+using Microsoft.Extensions.FileSystemGlobbing;
+using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 
 namespace Bearz;
 
 public static partial class Fs
 {
+    /// <summary>
+    /// Matches the given directory against the include and exclude glob patterns.
+    /// </summary>
+    /// <param name="directory">The root directory.</param>
+    /// <param name="include">The patterns used to include files.</param>
+    /// <param name="exclude">The patterns used to exclude files.</param>
+    /// <returns>The pattern matching result.</returns>
+    public static PatternMatchingResult Match(string directory, StringList? include = null, StringList? exclude = null)
+    {
+        var matcher = new Matcher();
+        if (include != null)
+            matcher.AddExcludePatterns(include);
+
+        if (exclude != null)
+            matcher.AddExcludePatterns(exclude);
+
+        return matcher.Execute(new DirectoryInfoWrapper(new DirectoryInfo(directory)));
+    }
+
+    public static IEnumerable<string> EnumerateDirectoryMatches(
+        string directory,
+        StringList? include = null,
+        StringList? exclude = null,
+        SearchOption searchOption = SearchOption.TopDirectoryOnly)
+    {
+        var matcher = new Matcher();
+        if (include != null)
+            matcher.AddExcludePatterns(include);
+
+        if (exclude != null)
+            matcher.AddExcludePatterns(exclude);
+
+        var di = new DirectoryInfo(directory);
+        foreach (var next in di.EnumerateDirectories("*", searchOption))
+        {
+            PatternMatchingResult match = next.Parent is null
+                ? matcher.Match(next.Name)
+                : matcher.Match(next.Parent.FullName, next.Name);
+
+            if (match.HasMatches)
+                yield return next.FullName;
+        }
+    }
+
+    public static IEnumerable<string> EnumerateFileMatches(
+        string directory,
+        StringList? include = null,
+        StringList? exclude = null,
+        SearchOption searchOption = SearchOption.TopDirectoryOnly)
+    {
+        var matcher = new Matcher();
+        if (include != null)
+            matcher.AddExcludePatterns(include);
+
+        if (exclude != null)
+            matcher.AddExcludePatterns(exclude);
+
+        var di = new DirectoryInfo(directory);
+
+        foreach (var next in di.EnumerateFiles("*", searchOption))
+        {
+            PatternMatchingResult match = next.Directory is null
+                ? matcher.Match(next.Name)
+                : matcher.Match(next.Directory.FullName, next.Name);
+
+            if (match.HasMatches)
+                yield return next.FullName;
+        }
+    }
+
+    public static IEnumerable<string> EnumerateFileSystemInfoMatches(
+        string directory,
+        StringList? include = null,
+        StringList? exclude = null,
+        SearchOption searchOption = SearchOption.TopDirectoryOnly)
+    {
+        var matcher = new Matcher();
+        if (include != null)
+            matcher.AddExcludePatterns(include);
+
+        if (exclude != null)
+            matcher.AddExcludePatterns(exclude);
+
+        var root = new DirectoryInfo(directory);
+        foreach (var next in root.EnumerateFileSystemInfos("*", searchOption))
+        {
+            if (next is DirectoryInfo di)
+            {
+                PatternMatchingResult match = di.Parent is null
+                    ? matcher.Match(next.Name)
+                    : matcher.Match(di.Parent.FullName, next.Name);
+
+                if (match.HasMatches)
+                    yield return next.FullName;
+
+                continue;
+            }
+
+            if (next is FileInfo fi)
+            {
+                PatternMatchingResult match = fi.Directory is null
+                    ? matcher.Match(next.Name)
+                    : matcher.Match(fi.Directory.FullName, next.Name);
+
+                if (match.HasMatches)
+                    yield return next.FullName;
+            }
+        }
+    }
+
     public static string CatFiles(params string[] files)
     {
         return CatFiles((IEnumerable<string>)files);
@@ -132,7 +246,10 @@ public static partial class Fs
         => Directory.EnumerateFileSystemEntries(path, searchPattern);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern, SearchOption searchOption)
+    public static IEnumerable<string> EnumerateFileSystemEntries(
+        string path,
+        string searchPattern,
+        SearchOption searchOption)
         => Directory.EnumerateFileSystemEntries(path, searchPattern, searchOption);
 
     public static void EnsureDirectory(string path)
