@@ -10,8 +10,6 @@
     <PackageVersion Include="Dapper" Version="2.0.123" />
     <PackageVersion Include="Docker.DotNet" Version="3.125.14" />
     <PackageVersion Include="KeySharp" Version="1.0.5" />
-    <PackageVersion Include="KPCLib" Version="2.0.3" />
-    <PackageVersion Include="Microsoft.Extensions.FileSystemGlobbing" Version="7.0.0" />
     <PackageVersion Include="Polly" Version="7.2.3" />
     <PackageVersion Include="Serilog.Expressions" Version="3.4.1" />
     <PackageVersion Include="SSH.NET" Version="2020.0.2" />
@@ -56,8 +54,9 @@
     <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Ini" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-preview.3.23174.8" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.FileSystemGlobbing" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
@@ -68,6 +67,8 @@
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.1" />
     <PackageVersion Include="NuGet.Frameworks" Version="6.1.0" />
     <PackageVersion Include="coverlet.collector" Version="3.1.0" />
+    <PackageVersion Include="Nullable" Version="1.3.1" />
+    <PackageVersion Include="KPCLib" Version="2.0.3" />
     <PackageVersion Include="IsExternalInit" Version="1.0.3" />
     <PackageVersion Include="Nerdbank.GitVersioning" Version="3.5.119" />
     <PackageVersion Include="Mapster" Version="7.3.0" />
@@ -81,8 +82,8 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
-    <PackageVersion Include="Microsoft.TestPlatform.ObjectModel" Version="16.11.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+    <PackageVersion Include="Microsoft.TestPlatform.ObjectModel" Version="17.7.2" />
     <PackageVersion Include="Roslynator.Analyzers" Version="4.2.0" />
     <PackageVersion Include="DotNetAnalyzers.DocumentationAnalyzers" Version="1.0.0-beta.59" />
     <PackageVersion Include="ReflectionAnalyzers" Version="0.3.1" />
