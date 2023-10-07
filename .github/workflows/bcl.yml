@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     defaults:
       run:
-        working-directory: ../bcl
+        working-directory: bcl
     steps:
       - name: 🧳 Checkout
         uses: actions/checkout@v2
