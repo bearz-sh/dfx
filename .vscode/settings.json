@@ -1,5 +1,5 @@
 {
-    "dotnet.defaultSolution": "dfx.sln",
+    "dotnet.defaultSolution": "./bcl/dfx.sln",
     "deno.enable": true,
     "deno.lint": true,
     "deno.unstable": true,

@@ -32,9 +32,6 @@ public static partial class Fs
     public static FileSystemInfo? ResolveLinkedDirectory(string linkPath, bool returnFinalTarget = false)
         => Directory.ResolveLinkTarget(linkPath, returnFinalTarget);
 
-    public static FileStream OpenFile(string path, FileStreamOptions options)
-        => File.Open(path, options);
-
     public static Task<string> ReadTextFileAsync(string path, Encoding? encoding = null, CancellationToken cancellationToken = default)
         => File.ReadAllTextAsync(path, encoding ?? Encoding.UTF8, cancellationToken);
 

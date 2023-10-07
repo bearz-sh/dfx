@@ -11,6 +11,10 @@ namespace Bearz;
 
 public static partial class Fs
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static FileAttributes Attr(string path)
+        => File.GetAttributes(path);
+
     /// <summary>
     /// Matches the given directory against the include and exclude glob patterns.
     /// </summary>
@@ -20,6 +24,7 @@ public static partial class Fs
     /// <returns>The pattern matching result.</returns>
     public static PatternMatchingResult Match(string directory, StringList? include = null, StringList? exclude = null)
     {
+        File.GetAttributes(directory);
         var matcher = new Matcher();
         if (include != null)
             matcher.AddExcludePatterns(include);
@@ -272,6 +277,16 @@ public static partial class Fs
     public static bool FileExists(string path)
         => File.Exists(path);
 
+    public static FileSystemInfo Stat(string path)
+    {
+        var attr = File.GetAttributes(path);
+
+        if (attr.HasFlag(FileAttributes.Directory))
+            return new DirectoryInfo(path);
+
+        return new FileInfo(path);
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsDirectory(string path)
         => File.GetAttributes(path).HasFlag(FileAttributes.Directory);
@@ -293,19 +308,19 @@ public static partial class Fs
         => File.Move(source, destination);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static FileStream OpenReadFileSteam(string path)
+    public static FileStream OpenFile(string path)
         => File.OpenRead(path);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static FileStream OpenFileStream(string path, FileMode mode)
+    public static FileStream OpenFile(string path, FileMode mode)
         => File.Open(path, mode);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static FileStream OpenFileStream(string path, FileMode mode, FileAccess access)
+    public static FileStream OpenFile(string path, FileMode mode, FileAccess access)
         => File.Open(path, mode, access);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static FileStream OpenFileStream(string path, FileMode mode, FileAccess access, FileShare share)
+    public static FileStream OpenFile(string path, FileMode mode, FileAccess access, FileShare share)
         => File.Open(path, mode, access, share);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

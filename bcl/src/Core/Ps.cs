@@ -63,14 +63,25 @@ public sealed partial class Ps
         Environment.Exit(code);
     }
 
-    public static Ps New(string fileName)
-    {
-        return new Ps(fileName);
-    }
-
     public static Ps New(string fileName, PsStartInfo startInfo)
     {
         return new Ps(fileName, startInfo);
+    }
+
+    public static Ps New(PsCommand command, PsStartInfo? startInfo)
+    {
+        var ps = new Ps(command.GetExecutablePath(), startInfo);
+        ps.WithArgs(command);
+        return ps;
+    }
+
+    public static Ps New(string fileName, PsArgs? args = null, PsStartInfo? startInfo = null)
+    {
+        var ps = new Ps(fileName, startInfo);
+        if (args != null)
+            ps.WithArgs(args);
+
+        return ps;
     }
 
     public static PsOutput Capture(PsCommand command, PsStartInfo? startInfo = null)
@@ -375,7 +386,7 @@ public sealed partial class Ps
         if (this.StartInfo.StdErr == Stdio.Piped)
         {
             stdError = new List<string>();
-            this.StartInfo.Capture(stdError);
+            this.StartInfo.CaptureError(stdError);
         }
 
         using var child = new PsChild(this.FileName, this.StartInfo);
@@ -397,7 +408,7 @@ public sealed partial class Ps
         if (this.StartInfo.StdErr == Stdio.Piped)
         {
             stdError = new List<string>();
-            this.StartInfo.Capture(stdError);
+            this.StartInfo.CaptureError(stdError);
         }
 
         using var child = new PsChild(this.FileName, this.StartInfo);

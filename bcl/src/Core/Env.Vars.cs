@@ -60,10 +60,10 @@ public static partial class Env
         return value != null;
     }
 
-    public static IEnumerable<string> SplitPath()
+    public static IEnumerable<string> SplitPath(EnvironmentVariableTarget target = EnvironmentVariableTarget.Process)
     {
         var name = IsWindows ? "Path" : "PATH";
-        var path = Get(name) ?? string.Empty;
+        var path = Get(name, target) ?? string.Empty;
         return path.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
     }
 

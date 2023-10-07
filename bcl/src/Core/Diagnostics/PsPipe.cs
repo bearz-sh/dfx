@@ -28,9 +28,11 @@ public class PsPipe
         var ps = new Ps(fileName, startInfo);
         if (args != null)
             ps.WithArgs(args);
-        ps.WithStdOut(Stdio.Piped);
+        ps.WithStdio(Stdio.Piped);
         var next = ps.Spawn();
         this.child.PipeTo(next);
+        this.child.Wait();
+        this.child.Dispose();
         this.child = next;
 
         return this;
@@ -40,9 +42,11 @@ public class PsPipe
     {
         var ps = new Ps(command.GetExecutablePath(), startInfo);
         ps.WithArgs(command);
-        ps.WithStdOut(Stdio.Piped);
+        ps.WithStdio(Stdio.Piped);
         var next = ps.Spawn();
         this.child.PipeTo(next);
+        this.child.Wait();
+        this.child.Dispose();
         this.child = next;
 
         return this;
@@ -50,9 +54,11 @@ public class PsPipe
 
     public PsPipe Pipe(Ps ps)
     {
-        ps.WithStdOut(Stdio.Piped);
+        ps.WithStdio(Stdio.Piped);
         var next = ps.Spawn();
         this.child.PipeTo(next);
+        this.child.Wait();
+        this.child.Dispose();
         this.child = next;
 
         return this;
@@ -61,6 +67,8 @@ public class PsPipe
     public PsPipe Pipe(PsChild next)
     {
         this.child.PipeTo(next);
+        this.child.Wait();
+        this.child.Dispose();
         this.child = next;
 
         return this;
@@ -70,6 +78,7 @@ public class PsPipe
     {
         await this.child.PipeToAsync(next, cancellationToken)
             .ConfigureAwait(false);
+        this.child.Dispose();
         this.child = next;
         return this;
     }
@@ -78,20 +87,22 @@ public class PsPipe
     {
         var ps = new Ps(command.GetExecutablePath(), startInfo);
         ps.WithArgs(command);
-        ps.WithStdOut(Stdio.Piped);
+        ps.WithStdio(Stdio.Piped);
         var next = ps.Spawn();
         await this.child.PipeToAsync(next, cancellationToken)
             .ConfigureAwait(false);
+        this.child.Dispose();
         this.child = next;
         return this;
     }
 
     public async Task<PsPipe> PipeAsync(Ps ps, CancellationToken cancellationToken = default)
     {
-        ps.WithStdOut(Stdio.Piped);
+        ps.WithStdio(Stdio.Piped);
         var next = ps.Spawn();
         await this.child.PipeToAsync(next, cancellationToken)
             .ConfigureAwait(false);
+        this.child.Dispose();
         this.child = next;
         return this;
     }
@@ -106,6 +117,7 @@ public class PsPipe
         var next = ps.Spawn();
         await this.child.PipeToAsync(next, cancellationToken)
             .ConfigureAwait(false);
+        this.child.Dispose();
         this.child = next;
         return this;
     }

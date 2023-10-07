@@ -14,9 +14,9 @@ internal
     /// <param name="right">The right side of the compare.</param>
     /// <typeparam name="T">The type of the elements in the array.</typeparam>
     /// <returns><c>True</c> when both objects are equal; otherwise, <c>false</c>.</returns>
-    public static bool Equals<T>(this T[]? left, T[]? right)
+    public static bool EqualTo<T>(this T[] left, T[] right)
     {
-        return Equals(left, right, EqualityComparer<T>.Default);
+        return EqualTo(left, right, EqualityComparer<T>.Default);
     }
 
     /// <summary>
@@ -27,7 +27,7 @@ internal
     /// <param name="comparer">The comparer implementation to use.</param>
     /// <typeparam name="T">The type of the elements in the array.</typeparam>
     /// <returns><c>True</c> when both objects are equal; otherwise, <c>false</c>.</returns>
-    public static bool Equals<T>(this T[]? left, T[]? right, IComparer<T> comparer)
+    public static bool EqualTo<T>(this T[] left, T[] right, IComparer<T> comparer)
     {
         if (ReferenceEquals(left, right))
             return true;
@@ -60,7 +60,7 @@ internal
     /// <param name="comparer">The comparison delegate to use.</param>
     /// <typeparam name="T">The type of the elements in the array.</typeparam>
     /// <returns><c>True</c> when both objects are equal; otherwise, <c>false</c>.</returns>
-    public static bool Equals<T>(this T[]? left, T[]? right, Comparison<T> comparer)
+    public static bool EqualTo<T>(this T[]? left, T[]? right, Comparison<T> comparer)
     {
         if (ReferenceEquals(left, right))
             return true;
@@ -93,7 +93,7 @@ internal
     /// <param name="comparer">The equality comparer implementation to use.</param>
     /// <typeparam name="T">The type of the elements in the array.</typeparam>
     /// <returns><c>True</c> when both objects are equal; otherwise, <c>false</c>.</returns>
-    public static bool Equals<T>(this T[]? left, T[]? right, IEqualityComparer<T> comparer)
+    public static bool EqualTo<T>(this T[]? left, T[]? right, IEqualityComparer<T> comparer)
     {
         if (ReferenceEquals(left, right))
             return true;

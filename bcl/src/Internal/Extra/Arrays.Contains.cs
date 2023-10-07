@@ -21,4 +21,32 @@ internal
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Contains<T>(this T[] array, T item)
         => Array.IndexOf(array, item) != -1;
+
+    public static bool Contains<T>(this T[] array, T item, IEqualityComparer<T> comparer)
+    {
+        if (comparer == null)
+            return Contains(array, item);
+
+        for (var i = 0; i < array.Length; i++)
+        {
+            if (comparer.Equals(array[i], item))
+                return true;
+        }
+
+        return false;
+    }
+
+    public static bool Contains(this string[] array, string item, StringComparer comparer)
+    {
+        if (comparer == null)
+            return Contains(array, item);
+
+        for (var i = 0; i < array.Length; i++)
+        {
+            if (comparer.Equals(array[i], item))
+                return true;
+        }
+
+        return false;
+    }
 }

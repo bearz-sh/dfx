@@ -50,6 +50,7 @@
     <Compile Include="$(InternalDir)/Extra/Arrays.ForEach.cs" Link="Extra/Arrays/Arrays.ForEach.cs" />
     <Compile Include="$(InternalDir)/Extra/Arrays.Slice.cs" Link="Extra/Arrays/Arrays.Slice.cs" />
     <Compile Include="$(InternalDir)/Extra/Arrays.Swap.cs" Link="Extra/Arrays/Arrays.Swap.cs" />
+    <Compile Include="$(InternalDir)/Extra/Arrays.Segment.cs" Link="Extra/Arrays/Arrays.Segment.cs" />
     <Compile Include="$(InternalDir)/Extra/Exceptions.IsInputIOException.cs" Link="Extra/IO/Exceptions.IsInputIOException.cs" />
     <Compile Include="$(InternalDir)/Extra/StreamReader.PipeTo.cs" Link="Extra/IO/StreamReader.PipeTo.cs" />
     <Compile Include="$(InternalDir)/Extra/TextReader.PipeTo.cs" Link="Extra/IO/TextReader.PipeTo.cs" />

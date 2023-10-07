@@ -13,7 +13,7 @@ internal
     /// <param name="array">The one dimensional array to slice from.</param>
     /// <typeparam name="T">The type of the elements in the array.</typeparam>
     /// <returns>A <see cref="Span{T}"/>.</returns>
-    public static Span<T> Slice<T>(T[] array)
+    public static Span<T> Slice<T>(this T[] array)
         => Slice(array, 0, array.Length);
 
     /// <summary>
@@ -23,7 +23,7 @@ internal
     /// <param name="start">The zero-based position to start the slice.</param>
     /// <typeparam name="T">The type of the elements in the array.</typeparam>
     /// <returns>A <see cref="Span{T}"/>.</returns>
-    public static Span<T> Slice<T>(T[] array, int start)
+    public static Span<T> Slice<T>(this T[] array, int start)
         => Slice(array, start, array.Length - start);
 
     /// <summary>
@@ -42,7 +42,7 @@ internal
     /// Thrown when the <paramref name="start"/> plus <paramref name="length"/> is greater than
     /// <paramref name="array"/>'s length.
     /// </exception>
-    public static Span<T> Slice<T>(T[] array, int start, int length)
+    public static Span<T> Slice<T>(this T[] array, int start, int length)
     {
         if (array == null)
             throw new ArgumentNullException(nameof(array));

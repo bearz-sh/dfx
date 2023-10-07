@@ -17,6 +17,8 @@ public sealed class PsChild : IDisposable
 
     private readonly List<IDisposable> disposables = new();
 
+    private bool disposed;
+
     private DateTime exitTime;
 
     internal PsChild(string file, PsStartInfo startInfo)
@@ -41,7 +43,10 @@ public sealed class PsChild : IDisposable
         si.FileName = file;
         si.CreateNoWindow = startInfo.CreateNoWindow;
         si.UseShellExecute = startInfo.UseShellExecute;
-        si.LoadUserProfile = startInfo.LoadUserProfile;
+        si.RedirectStandardInput = startInfo.StdIn == Stdio.Piped;
+
+        if (Env.IsWindows)
+            si.LoadUserProfile = startInfo.LoadUserProfile;
 
         if (Env.IsWindows && !startInfo.User.IsNullOrWhiteSpace())
         {
@@ -271,6 +276,7 @@ public sealed class PsChild : IDisposable
             throw new InvalidOperationException("Cannot pipe to stdout when stream is not redirected.");
 
         this.process.StandardOutput.BaseStream.CopyTo(child.process.StandardInput.BaseStream);
+        child.process.StandardInput.BaseStream.Close();
     }
 
     public Task PipeToAsync(Stream stream, int bufferSize = -1, CancellationToken cancellationToken = default)
@@ -438,19 +444,50 @@ public sealed class PsChild : IDisposable
         if (this.process.HasExited)
         {
             this.exitTime = this.process.ExitTime;
+            IReadOnlyList<string> stdout = Array.Empty<string>();
+            IReadOnlyList<string> stderr = Array.Empty<string>();
+            if (this.IsOutRedirected && !this.IsOutCaptured)
+            {
+                stdout = this.process.StandardOutput.ReadToEnd().Split(Env.NewLine);
+            }
+
+            if (this.IsErrorRedirected && !this.IsErrorCaptured)
+            {
+                stderr = this.process.StandardError.ReadToEnd().Split(Env.NewLine);
+            }
+
             return new PsOutput(
                 this.process.StartInfo.FileName,
                 this.process.ExitCode,
-                null,
-                null,
+                stdout,
+                stderr,
                 this.StartTime,
                 this.exitTime);
         }
+        else
+        {
+            IReadOnlyList<string> stdout = Array.Empty<string>();
+            IReadOnlyList<string> stderr = Array.Empty<string>();
+            if (this.IsOutRedirected && !this.IsOutCaptured)
+            {
+                stdout = this.process.StandardOutput.ReadToEnd().Split(Env.NewLine);
+            }
 
-        this.process.WaitForExit();
-        this.exitTime = this.process.ExitTime;
-        var output = new PsOutput(this.process.StartInfo.FileName, this.process.ExitCode, null, null, this.StartTime, this.exitTime);
-        return output;
+            if (this.IsErrorRedirected && !this.IsErrorCaptured)
+            {
+                stderr = this.process.StandardError.ReadToEnd().Split(Env.NewLine);
+            }
+
+            this.process.WaitForExit();
+            this.exitTime = this.process.ExitTime;
+            return new PsOutput(
+                this.process.StartInfo.FileName,
+                this.process.ExitCode,
+                stdout,
+                stderr,
+                this.StartTime,
+                this.exitTime);
+        }
     }
 
     public async Task<int> WaitAsync(CancellationToken cancellationToken)
@@ -471,26 +508,54 @@ public sealed class PsChild : IDisposable
         if (this.process.HasExited)
         {
             this.exitTime = this.process.ExitTime;
+            IReadOnlyList<string> stdout = Array.Empty<string>();
+            IReadOnlyList<string> stderr = Array.Empty<string>();
+            #pragma warning disable AsyncFixer02
+            if (this.IsOutRedirected && !this.IsOutCaptured)
+            {
+                stdout = this.process.StandardOutput.ReadToEnd().Split(Env.NewLine);
+            }
+
+            if (this.IsErrorRedirected && !this.IsErrorCaptured)
+            {
+                stderr = this.process.StandardError.ReadToEnd().Split(Env.NewLine);
+            }
+
             return new PsOutput(
                 this.process.StartInfo.FileName,
                 this.process.ExitCode,
-                null,
-                null,
+                stdout,
+                stderr,
                 this.StartTime,
                 this.exitTime);
         }
+        else
+        {
+            await this.process.WaitForExitAsync(cancellationToken)
+                .ConfigureAwait(false);
 
-        await this.process.WaitForExitAsync(cancellationToken)
-            .ConfigureAwait(false);
+            this.exitTime = this.process.ExitTime;
+            IReadOnlyList<string> stdout = Array.Empty<string>();
+            IReadOnlyList<string> stderr = Array.Empty<string>();
+            #pragma warning disable AsyncFixer02
+            if (this.IsOutRedirected && !this.IsOutCaptured)
+            {
+                stdout = this.process.StandardOutput.ReadToEnd().Split(Env.NewLine);
+            }
 
-        this.exitTime = this.process.ExitTime;
-        return new PsOutput(
-            this.process.StartInfo.FileName,
-            this.process.ExitCode,
-            null,
-            null,
-            this.StartTime,
-            this.exitTime);
+            if (this.IsErrorRedirected && !this.IsErrorCaptured)
+            {
+                stderr = this.process.StandardError.ReadToEnd().Split(Env.NewLine);
+            }
+
+            return new PsOutput(
+                this.process.StartInfo.FileName,
+                this.process.ExitCode,
+                stdout,
+                stderr,
+                this.StartTime,
+                this.exitTime);
+        }
     }
 
     public void Kill()
@@ -500,6 +565,10 @@ public sealed class PsChild : IDisposable
 
     public void Dispose()
     {
+        if (this.disposed)
+            return;
+
+        this.disposed = true;
         GC.SuppressFinalize(this);
         this.process.Dispose();
         if (this.disposables.Count == 0)

@@ -31,4 +31,8 @@
     <PackageReference Include="Bearz.Xunit.Core" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="$(SrcDir)/Core/*.csproj" />
+  </ItemGroup>
+
 </Project>

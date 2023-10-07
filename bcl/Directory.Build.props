@@ -4,6 +4,8 @@
     <PropertyGroup>
         <IsTrimmable Condition="$(TargetFramework.StartsWith('net6')) OR $(TargetFramework.StartsWith('net7')) OR $(TargetFramework.StartsWith('net8'))">true</IsTrimmable>
         <Version>0.1.0</Version>
-        <RepositoryUrl>$(BaseTreeUrl)/bcl</RepositoryUrl> 
+        <RepositoryUrl>$(BaseTreeUrl)/bcl</RepositoryUrl>
+        <SrcDir>$(MSBuildThisFileDirectory)/src</SrcDir>
+        <TestDir>$(MSBuildThisFileDirectory)/src</TestDir>
     </PropertyGroup>
 </Project>
