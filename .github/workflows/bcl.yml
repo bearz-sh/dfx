@@ -1,12 +1,10 @@
 on: 
   push:
     paths: 
-      - './bcl/**'
-      - './.github/workflows/bcl.yml'
-    tags-ignore: 
-      - '*'
+      - 'bcl/**'
+      - '.github/workflows/bcl.yml'
        
-
+name: "🎃 BCL"
 jobs:
   build: 
     strategy:
