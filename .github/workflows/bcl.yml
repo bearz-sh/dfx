@@ -1,8 +1,8 @@
 on: 
   push:
     paths: 
-      - 'bcl/**'
-      - '.github/workflows/bcl.yml'
+      - './bcl/**'
+      - './.github/workflows/bcl.yml'
        
 name: "🎃 BCL"
 jobs:
