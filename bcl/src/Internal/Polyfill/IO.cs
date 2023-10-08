@@ -9,6 +9,7 @@ internal static class IOExtensions
     public static void Write(this Stream stream, Span<byte> buffer)
     {
         var set = ArrayPool<byte>.Shared.Rent(buffer.Length);
+        buffer.CopyTo(set);
         stream.Write(set, 0, buffer.Length);
         ArrayPool<byte>.Shared.Return(set, true);
     }
@@ -16,6 +17,7 @@ internal static class IOExtensions
     public static void Write(this Stream stream, ReadOnlySpan<byte> buffer)
     {
         var set = ArrayPool<byte>.Shared.Rent(buffer.Length);
+        buffer.CopyTo(set);
         stream.Write(set, 0, buffer.Length);
         Array.Clear(set, 0, set.Length);
     }
@@ -23,6 +25,7 @@ internal static class IOExtensions
     public static void Write(this BinaryWriter writer, Span<byte> buffer)
     {
         var set = ArrayPool<byte>.Shared.Rent(buffer.Length);
+        buffer.CopyTo(set);
         writer.Write(set, 0, buffer.Length);
         ArrayPool<byte>.Shared.Return(set, true);
     }
@@ -30,6 +33,7 @@ internal static class IOExtensions
     public static void Write(this BinaryWriter writer, ReadOnlySpan<byte> buffer)
     {
         var set = ArrayPool<byte>.Shared.Rent(buffer.Length);
+        buffer.CopyTo(set);
         writer.Write(set, 0, buffer.Length);
         ArrayPool<byte>.Shared.Return(set, true);
     }

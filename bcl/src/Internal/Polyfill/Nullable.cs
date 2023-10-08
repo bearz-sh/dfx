@@ -1,4 +1,4 @@
-#if NETSTANDARD2_0
+#if NETLEGACY
 namespace System.Diagnostics.CodeAnalysis;
 #pragma warning disable SA1642, SA1623, SA1649
 
