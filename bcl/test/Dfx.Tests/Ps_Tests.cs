@@ -7,10 +7,10 @@ public class Ps_Tests
     [IntegrationTest]
     public void Exec(IAssert assert)
     {
-        var r = Ps.Exec("git", "status");
+        var r = Ps.Exec("dotnet", "status");
         assert.NotNull(r);
         assert.Equal(0, r.ExitCode);
-        assert.Equal("git", r.FileName);
+        assert.Equal("dotnet", r.FileName);
         assert.Equal(Array.Empty<string>(), r.StdError);
         assert.Equal(Array.Empty<string>(), r.StdOut);
     }
@@ -18,10 +18,10 @@ public class Ps_Tests
     [IntegrationTest]
     public async Task ExecAsync(IAssert assert)
     {
-        var r = await Ps.ExecAsync("git", "status");
+        var r = await Ps.ExecAsync("dotnet", "--version");
         assert.NotNull(r);
         assert.Equal(0, r.ExitCode);
-        assert.Equal("git", r.FileName);
+        assert.Equal("dotnet", r.FileName);
         assert.Equal(Array.Empty<string>(), r.StdError);
         assert.Equal(Array.Empty<string>(), r.StdOut);
     }
@@ -29,10 +29,10 @@ public class Ps_Tests
     [IntegrationTest]
     public void Capture(IAssert assert)
     {
-        var r = Ps.Capture("git", "status");
+        var r = Ps.Capture("dotnet", "--version");
         assert.NotNull(r);
         assert.Equal(0, r.ExitCode);
-        assert.Equal("git", r.FileName);
+        assert.Equal("dotnet", r.FileName);
         assert.True(r.StdError.Count == 0, "StdError should be empty");
         assert.True(r.StdOut.Count > 0, "StdOut should not be empty");
     }
@@ -40,10 +40,10 @@ public class Ps_Tests
     [IntegrationTest]
     public async Task CaptureAsync(IAssert assert)
     {
-        var r = await Ps.CaptureAsync("git", "status");
+        var r = await Ps.CaptureAsync("dotnet", "status");
         assert.NotNull(r);
         assert.Equal(0, r.ExitCode);
-        assert.Equal("git", r.FileName);
+        assert.Equal("dotnet", r.FileName);
         assert.True(r.StdError.Count == 0, "StdError should be empty");
         assert.True(r.StdOut.Count > 0, "StdOut should not be empty");
     }
@@ -51,6 +51,7 @@ public class Ps_Tests
     [IntegrationTest]
     public void Pipe(IAssert assert)
     {
+        // using msys tools on windows
         if (Env.IsWindows)
         {
             var git = Ps.Which("git");
