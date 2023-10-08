@@ -7,7 +7,7 @@ public class Ps_Tests
     [IntegrationTest]
     public void Exec(IAssert assert)
     {
-        var r = Ps.Exec("dotnet", "status");
+        var r = Ps.Exec("dotnet", "--version");
         assert.NotNull(r);
         assert.Equal(0, r.ExitCode);
         assert.Equal("dotnet", r.FileName);
@@ -40,7 +40,7 @@ public class Ps_Tests
     [IntegrationTest]
     public async Task CaptureAsync(IAssert assert)
     {
-        var r = await Ps.CaptureAsync("dotnet", "status");
+        var r = await Ps.CaptureAsync("dotnet", "--version");
         assert.NotNull(r);
         assert.Equal(0, r.ExitCode);
         assert.Equal("dotnet", r.FileName);
