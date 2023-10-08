@@ -11,30 +11,56 @@ using PsResult = Bearz.Result<Bearz.Diagnostics.PsOutput, System.Exception>;
 
 namespace Bearz;
 
+/// <summary>
+///  A wrapper around <see cref="Process"/> that provides a fluent API and provides
+///  guardrails around getting standard output and standard error with some influence
+///  from the rust/deno command api.
+/// </summary>
 public sealed partial class Ps
 {
     private static Process? s_process;
 
     private readonly List<IDisposable> disposables = new();
 
+    /// <summary>
+    ///   Initializes a new instance of the <see cref="Ps"/> class.
+    /// </summary>
+    /// <param name="fileName">The file name of the executable to invoke.</param>
     public Ps(string fileName)
     {
         this.FileName = fileName;
         this.StartInfo = new PsStartInfo();
     }
 
+    /// <summary>
+    ///   Initializes a new instance of the <see cref="Ps"/> class.
+    /// </summary>
+    /// <param name="fileName">The file name of the executable to invoke.</param>
+    /// <param name="startInfo">The <see cref="PsStartInfo"/> that contains the information that is used to start the process.</param>
     public Ps(string fileName, PsStartInfo? startInfo)
     {
         this.FileName = fileName;
         this.StartInfo = startInfo ?? new PsStartInfo();
     }
 
+    /// <summary>
+    /// Gets the unique identifier for the current process.
+    /// </summary>
     public static int Id => Current.Id;
 
+    /// <summary>
+    /// Gets the command line arguments for this process.
+    /// </summary>
     public static IReadOnlyList<string> Argv => Environment.GetCommandLineArgs();
 
+    /// <summary>
+    /// Gets the command line for this process including the arguments.
+    /// </summary>
     public static string CommandLine => Environment.CommandLine;
 
+    /// <summary>
+    /// Gets the current process.
+    /// </summary>
     public static Process Current
     {
         get
@@ -43,6 +69,9 @@ public sealed partial class Ps
         }
     }
 
+    /// <summary>
+    /// Gets or sets the exit code of the current process.
+    /// </summary>
     public static int ExitCode
     {
         get => Environment.ExitCode;
@@ -372,6 +401,10 @@ public sealed partial class Ps
         return new PsChild(this.FileName, this.StartInfo);
     }
 
+    /// <summary>
+    ///  Executes, waits, and returns the process output.
+    /// </summary>
+    /// <returns>The process output.</returns>
     public Result<PsOutput, Error> Output()
     {
         List<string>? stdOut = null;
@@ -394,6 +427,11 @@ public sealed partial class Ps
         return new PsOutput(this.FileName, ec, stdOut, stdError, child.StartTime, child.ExitTime);
     }
 
+    /// <summary>
+    /// Executes, waits, and returns the process output.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The process output.</returns>
     public async Task<PsOutput> OutputAsync(CancellationToken cancellationToken = default)
     {
         List<string>? stdOut = null;
@@ -429,19 +467,19 @@ public sealed partial class Ps
     public PsPipe Pipe(string fileName, PsArgs? args = null, PsStartInfo? startInfo = null)
         => new PsPipe(this).Pipe(fileName, args, startInfo);
 
-    public Task<PsPipe> PipeAsync(PsCommand ps, PsStartInfo? startInfo = null, CancellationToken cancellationToken = default)
-        => new PsPipe(this).PipeAsync(ps, startInfo, cancellationToken);
+    public PsPipeAsync PipeDefered(PsCommand ps, PsStartInfo? startInfo = null, CancellationToken cancellationToken = default)
+        => new PsPipeAsync(this).Pipe(ps, startInfo, cancellationToken);
 
-    public Task<PsPipe> PipeAsync(Ps ps, CancellationToken cancellationToken = default)
-        => new PsPipe(this).PipeAsync(ps, cancellationToken);
+    public PsPipeAsync PipeDefered(Ps ps, CancellationToken cancellationToken = default)
+        => new PsPipeAsync(this).Pipe(ps, cancellationToken);
 
-    public Task<PsPipe> PipeAsync(PsChild child, CancellationToken cancellationToken = default)
-        => new PsPipe(this).PipeAsync(child, cancellationToken);
+    public PsPipeAsync PipeDefered(PsChild child, CancellationToken cancellationToken = default)
+        => new PsPipeAsync(this).Pipe(child, cancellationToken);
 
-    public Task<PsPipe> PipeAsync(
+    public PsPipeAsync PipeDefered(
         string fileName,
         PsArgs? args = null,
         PsStartInfo? startInfo = null,
         CancellationToken cancellationToken = default)
-        => new PsPipe(this).PipeAsync(fileName, args, startInfo, cancellationToken);
+        => new PsPipeAsync(this).Pipe(fileName, args, startInfo, cancellationToken);
 }

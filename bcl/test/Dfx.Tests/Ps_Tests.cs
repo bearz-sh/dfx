@@ -79,4 +79,36 @@ public class Ps_Tests
         assert.Equal(2, result.StdOut.Count);
         assert.Equal("my test", result.StdOut[0]);
     }
+
+    [IntegrationTest]
+    public async Task PipeDefferredAsync(IAssert assert)
+    {
+        // using msys tools on windows
+        if (Env.IsWindows)
+        {
+            var git = Ps.Which("git");
+            if (git == null)
+                return;
+
+            var dir = Path.GetDirectoryName(git);
+            if (dir == null)
+                return;
+            var bin = Path.Combine(dir!, "usr", "bin");
+            if (!Fs.DirectoryExists(bin))
+                return;
+
+            Env.AddPath(bin, true);
+        }
+
+        var result = await Ps.New("echo", "my test")
+            .PipeDefered("grep", "test")
+            .Pipe("cat")
+            .OutputAsync();
+
+        assert.NotNull(result);
+        assert.Equal(0, result.ExitCode);
+        assert.Equal("cat", result.FileName);
+        assert.Equal(2, result.StdOut.Count);
+        assert.Equal("my test", result.StdOut[0]);
+    }
 }

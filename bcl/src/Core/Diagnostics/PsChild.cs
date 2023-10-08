@@ -275,6 +275,9 @@ public sealed class PsChild : IDisposable
         if (!this.IsOutRedirected)
             throw new InvalidOperationException("Cannot pipe to stdout when stream is not redirected.");
 
+        if (!child.IsInRedirected)
+            throw new InvalidOperationException("Cannot pipe to child proccess' input when child process input is not redirected.");
+
         this.process.StandardOutput.BaseStream.CopyTo(child.process.StandardInput.BaseStream);
         child.process.StandardInput.BaseStream.Close();
     }
@@ -326,7 +329,7 @@ public sealed class PsChild : IDisposable
         return this.process.StandardOutput.PipeToAsync(file,  encoding, bufferSize, cancellationToken);
     }
 
-    public Task PipeToAsync(PsChild child, CancellationToken cancellationToken = default)
+    public async Task PipeToAsync(PsChild child, CancellationToken cancellationToken = default)
     {
         if (this.IsOutCaptured)
             throw new InvalidOperationException("Cannot pipe stdout when output is captured.");
@@ -334,13 +337,17 @@ public sealed class PsChild : IDisposable
         if (!this.IsOutRedirected)
             throw new InvalidOperationException("Cannot pipe to stdout when stream is not redirected.");
 
-        if (child.IsInRedirected)
+        if (!child.IsInRedirected)
             throw new InvalidOperationException("Cannot pipe to child's input when child input is not redirected.");
 
 #if NETLEGACY
-        return this.process.StandardOutput.BaseStream.CopyToAsync(child.process.StandardInput.BaseStream);
+        await this.process.StandardOutput.BaseStream.CopyToAsync(child.process.StandardInput.BaseStream)
+            .ConfigureAwait(false);
+        child.process.StandardInput.BaseStream.Close();
 #else
-        return this.process.StandardOutput.BaseStream.CopyToAsync(child.process.StandardInput.BaseStream, cancellationToken);
+        await this.process.StandardOutput.BaseStream.CopyToAsync(child.process.StandardInput.BaseStream, cancellationToken)
+            .ConfigureAwait(false);
+        child.process.StandardInput.BaseStream.Close();
 #endif
     }
 
