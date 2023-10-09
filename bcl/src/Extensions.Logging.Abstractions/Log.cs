@@ -6,13 +6,17 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Bearz.Extensions.Logging;
 
+/// <summary>
+/// Provides an application bootstrap logger or application wide logger
+/// for small applications.
+/// </summary>
 public static class Log
 {
-    private static ILoggerFactory s_loggerFactory = NullLoggerFactory.Instance;
-
     // order of static fields matter and this one must be initialized last.
     [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
-    private static Lazy<ILogger> s_rootLogger = new(() => Factory.CreateLogger(RootCategory.Name));
+    private static readonly Lazy<ILogger> s_rootLogger = new(() => Factory.CreateLogger(RootCategory.Name));
+
+    private static ILoggerFactory s_loggerFactory = NullLoggerFactory.Instance;
 
     public static ILoggerFactory Factory
     {

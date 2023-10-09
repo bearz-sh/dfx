@@ -58,6 +58,7 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.FileSystemGlobbing" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="7.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
@@ -81,7 +82,6 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.1" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
     <PackageVersion Include="Microsoft.TestPlatform.ObjectModel" Version="17.7.2" />
     <PackageVersion Include="Roslynator.Analyzers" Version="4.2.0" />

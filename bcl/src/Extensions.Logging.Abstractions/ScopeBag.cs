@@ -3,6 +3,10 @@ using System.Runtime.InteropServices;
 
 namespace Bearz.Extensions.Logging;
 
+/// <summary>
+/// Provides a bag of properties that can be used to enrich log messages that default to
+/// using open telemetry's naming conventions.
+/// </summary>
 public sealed class ScopeBag
 {
     private readonly Dictionary<string, object?> bag = new(StringComparer.OrdinalIgnoreCase);
@@ -55,12 +59,6 @@ public sealed class ScopeBag
         return this;
     }
 
-    public ScopeBag WithUser(string userName)
-    {
-        this.bag["user"] = userName;
-        return this;
-    }
-
     public ScopeBag WithOs(OSPlatform platform, string? version = null, string? name = null)
     {
         this.bag["os.type"] = platform.ToString();
@@ -74,18 +72,51 @@ public sealed class ScopeBag
 
     public ScopeBag WithUserId<T>(T id)
     {
-        this.bag["userId"] = id;
+        this.bag["enduser.id"] = id;
         return this;
     }
 
-    public ScopeBag WithHttpResponse(HttpResponseMessage response)
+    public ScopeBag WithThread(Thread thread)
+    {
+        this.bag["thread.id"] = thread.ManagedThreadId;
+        this.bag["thread.name"] = thread.Name;
+        return this;
+    }
+
+    public ScopeBag WithException(Exception exception, bool escaped = false)
+    {
+        this.bag["exception.type"] = exception.GetType().FullName;
+        this.bag["exception.message"] = exception.Message;
+        this.bag["exception.stacktrace"] = exception.StackTrace;
+        this.bag["exception.escaped"] = escaped;
+        return this;
+    }
+
+    public ScopeBag WithHttpResponse(HttpResponseMessage response, string method = "get")
     {
         this.bag["http.status_code"] = (int)response.StatusCode;
         this.bag["http.status"] = response.StatusCode.ToString();
-        this.bag["http.url"] = response.RequestMessage?.RequestUri?.ToString();
-        this.bag["http.response_content_length"] =
-            response.Headers.GetValues("Content-Length").FirstOrDefault();
-        this.bag["http.method"] = response.RequestMessage?.Method.ToString();
+
+        var url = response.RequestMessage?.RequestUri?.ToString() ??
+            response.Headers.Location?.ToString();
+
+        if (url is not null)
+            this.bag["url.full"] = url;
+
+        var responseSize = response.Content?.Headers.ContentLength;
+        if (responseSize.HasValue)
+            this.bag["http.response.body.size"] = responseSize.Value;
+
+        var requestSize = response.RequestMessage?.Content?.Headers.ContentLength;
+        if (requestSize.HasValue)
+            this.bag["http.request.body.size"] = requestSize.Value;
+
+        if (response.RequestMessage?.Headers.UserAgent != null)
+            this.bag["http.user_agent"] = response.RequestMessage.Headers.UserAgent.ToString();
+
+        var m = response.RequestMessage?.Method.ToString() ?? method;
+        this.bag["http.method"] = m;
+
         return this;
     }
 
