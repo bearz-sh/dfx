@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8F3E32AE-AD25-4148-BD68-D2F8A679C082}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bearz.CommandLine", "src\CommandLine\Bearz.CommandLine.csproj", "{5194FC9D-4565-4C54-B561-A76D7BA0D42D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bearz.CommandLine.Hosting", "src\CommandLine.Hosting\Bearz.CommandLine.Hosting.csproj", "{CA70D5D1-4285-41CE-BDF7-423C5333DF48}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bearz.CommandLine.Logging", "src\CommandLine.Logging\Bearz.CommandLine.Logging.csproj", "{F7827167-648A-40D6-99A7-3BCA99B9F6E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bearz.CommandLine.Pipelines", "src\CommandLine.Pipelines\Bearz.CommandLine.Pipelines.csproj", "{9E983ABD-03B8-4B89-B7B1-90DCEA0887F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bearz.CommandLine.Spectre", "src\CommandLine.Spectre\Bearz.CommandLine.Spectre.csproj", "{501162D6-8118-45DE-899F-0D0115EFE629}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5194FC9D-4565-4C54-B561-A76D7BA0D42D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5194FC9D-4565-4C54-B561-A76D7BA0D42D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5194FC9D-4565-4C54-B561-A76D7BA0D42D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5194FC9D-4565-4C54-B561-A76D7BA0D42D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA70D5D1-4285-41CE-BDF7-423C5333DF48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA70D5D1-4285-41CE-BDF7-423C5333DF48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA70D5D1-4285-41CE-BDF7-423C5333DF48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA70D5D1-4285-41CE-BDF7-423C5333DF48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7827167-648A-40D6-99A7-3BCA99B9F6E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7827167-648A-40D6-99A7-3BCA99B9F6E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7827167-648A-40D6-99A7-3BCA99B9F6E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7827167-648A-40D6-99A7-3BCA99B9F6E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E983ABD-03B8-4B89-B7B1-90DCEA0887F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E983ABD-03B8-4B89-B7B1-90DCEA0887F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E983ABD-03B8-4B89-B7B1-90DCEA0887F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E983ABD-03B8-4B89-B7B1-90DCEA0887F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{501162D6-8118-45DE-899F-0D0115EFE629}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{501162D6-8118-45DE-899F-0D0115EFE629}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{501162D6-8118-45DE-899F-0D0115EFE629}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{501162D6-8118-45DE-899F-0D0115EFE629}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5194FC9D-4565-4C54-B561-A76D7BA0D42D} = {8F3E32AE-AD25-4148-BD68-D2F8A679C082}
+		{CA70D5D1-4285-41CE-BDF7-423C5333DF48} = {8F3E32AE-AD25-4148-BD68-D2F8A679C082}
+		{F7827167-648A-40D6-99A7-3BCA99B9F6E3} = {8F3E32AE-AD25-4148-BD68-D2F8A679C082}
+		{9E983ABD-03B8-4B89-B7B1-90DCEA0887F9} = {8F3E32AE-AD25-4148-BD68-D2F8A679C082}
+		{501162D6-8118-45DE-899F-0D0115EFE629} = {8F3E32AE-AD25-4148-BD68-D2F8A679C082}
+	EndGlobalSection
+EndGlobal

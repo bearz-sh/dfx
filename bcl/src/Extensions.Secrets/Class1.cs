@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace Bearz.CommandLine;
+namespace Bearz.Extensions.Secrets;
 
 public class Class1
 {

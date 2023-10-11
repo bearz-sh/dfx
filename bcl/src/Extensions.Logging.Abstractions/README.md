@@ -4,6 +4,6 @@ Provides a bootstrapping logger for the Microsoft.Extensions.Logging framework f
 startup before dependency injection, extension methods for logging, and a scope bag to make it easier
 to add properties for BeginScope.
 
-## License 
+## License
 
 MIT
